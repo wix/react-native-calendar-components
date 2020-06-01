@@ -137,7 +137,8 @@ class CalendarProvider extends Component {
     if (disabledOpacity) {
       Animated.timing(this.state.opacity, {
         toValue: disabled ? disabledOpacity : 1, 
-        duration: 500
+        duration: 500,
+        useNativeDriver: true
       }).start();
     }
   }

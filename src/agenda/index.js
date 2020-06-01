@@ -143,6 +143,12 @@ export default class AgendaView extends Component {
     // It needs to be scrolled to the bottom, so that when user moves finger downwards,
     // scroll position actually changes (it would stay at 0, when scrolled to the top).
     this.setScrollPadPosition(this.initialScrollPadPosition(), false);
+
+    // If ScrollPad position is set to initialScrollPadPosition then calenderScrollable must be false
+    this.setState({
+      calendarScrollable: false
+    });
+
     // delay rendering calendar in full height because otherwise it still flickers sometimes
     setTimeout(() => this.setState({calendarIsReady: true}), 0);
   }

@@ -99,7 +99,9 @@ class CalendarList extends Component {
       rows,
       texts,
       openDate: date,
-      currentMonth: parseDate(props.current)
+      currentMonth: parseDate(props.current),
+      addMarginTop: 0,
+      addMarginBottom: 360
     };
 
     this.onViewableItemsChangedBound = this.onViewableItemsChanged.bind(this);
@@ -130,8 +132,15 @@ class CalendarList extends Component {
           break;
         }
       }
+      if (scrollAmount < 0) {
+        this.setState({addMarginTop: Math.abs(scrollAmount)});
+      } else {
+        this.setState({addMarginTop: 0});
+        this.listView.scrollToOffset({offset: scrollAmount, animated});
+      }
+    } else {
+      this.listView.scrollToOffset({offset: scrollAmount, animated});
     }
-    this.listView.scrollToOffset({offset: scrollAmount, animated});
   }
 
   scrollToMonth(m) {
@@ -207,7 +216,9 @@ class CalendarList extends Component {
     });
   }
 
-  renderCalendar({item}) {
+  renderCalendar({item, index}) {
+    let totalScrollAbleMonths = this.props.pastScrollRange + this.props.futureScrollRange;
+
     return (
       <CalendarListItem
         testID={`${this.props.testID}_${item}`}
@@ -216,7 +227,7 @@ class CalendarList extends Component {
         calendarHeight={this.props.calendarHeight} 
         calendarWidth={this.props.horizontal ? this.props.calendarWidth : undefined} 
         {...this.props} 
-        style={this.props.calendarStyle}
+        style={this.props.calendarStyle, index === totalScrollAbleMonths ? {marginBottom: this.state.addMarginBottom} : null}
       />
     );
   }
@@ -300,7 +311,7 @@ class CalendarList extends Component {
           onLayout={this.onLayout}
           ref={(c) => this.listView = c}
           //scrollEventThrottle={1000}
-          style={[this.style.container, this.props.style]}
+          style={[this.style.container, this.props.style, this.props.scrollEnabled ? {marginTop: 0} : {marginTop: this.state.addMarginTop}]}
           initialListSize={this.props.pastScrollRange + this.props.futureScrollRange + 1} // ListView deprecated
           data={this.state.rows}
           //snapToAlignment='start'
