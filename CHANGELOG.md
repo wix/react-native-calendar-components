@@ -314,3 +314,5 @@
 ## [1.298.0] - 2020-6-17
 - New Feature - Control the swipe on Calendar with new prop - enableSwipeMonths
 
+## [1.293.0] - 2020-7-6
+- Added new prop for custom hitSlop for calendar header

@@ -1,11 +1,13 @@
 import {Navigation} from 'react-native-navigation';
 
-import MenuScreen from './menu';
-import CalendarsScreen from './calendars';
 import AgendaScreen from './agenda';
+import CalendarsScreen from './calendars';
 import CalendarsList from './calendarsList';
-import HorizontalCalendarList from './horizontalCalendarList';
 import ExpandableCalendar from './expandableCalendar';
+
+import HorizontalCalendarList from './horizontalCalendarList';
+import MenuScreen from './menu';
+
 import TimelineCalendar from './timelineCalendar';
 
 export function registerScreens() {

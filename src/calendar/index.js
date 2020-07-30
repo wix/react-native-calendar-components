@@ -1,21 +1,20 @@
+import PropTypes from 'prop-types';
 import React, {Component} from 'react';
 import * as ReactNative from 'react-native';
-import PropTypes from 'prop-types';
+import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 import XDate from 'xdate';
 
 import dateutils from '../dateutils';
-import {xdateToData, parseDate} from '../interface';
-import styleConstructor from './style';
+import {parseDate, xdateToData} from '../interface';
+import {SELECT_DATE_SLOT} from '../testIDs';
 import Day from './day/basic';
-import UnitDay from './day/period';
+import SingleDay from './day/custom';
 import MultiDotDay from './day/multi-dot';
 import MultiPeriodDay from './day/multi-period';
-import SingleDay from './day/custom';
+import UnitDay from './day/period';
 import CalendarHeader from './header';
+import styleConstructor from './style';
 import shouldComponentUpdate from './updater';
-import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
-import {SELECT_DATE_SLOT} from '../testIDs';
-
 
 //Fallback when RN version is < 0.44
 const {View, ViewPropTypes} = ReactNative;
@@ -95,12 +94,17 @@ class Calendar extends Component {
     disableAllTouchEventsForDisabledDays: PropTypes.bool,
     /** Replace default month and year title with custom one. the function receive a date as parameter. */
     renderHeader: PropTypes.any,
+
+    /** CalendarHeader left right arrows - how many px the Touchable is extended in all directions (default is 20) */
+    headerArrowsHitSlop: PropTypes.number,
+
     /** Enable the option to swipe between months. Default: false */
     enableSwipeMonths: PropTypes.bool
   };
 
   static defaultProps = {
-    enableSwipeMonths: false
+    enableSwipeMonths: false,
+    headerArrowsHitSlop: 20
   };
 
   constructor(props) {
@@ -392,6 +396,7 @@ class Calendar extends Component {
             disableArrowRight={this.props.disableArrowRight}
             disabledDaysIndexes={this.props.disabledDaysIndexes}
             renderHeader={this.props.renderHeader}
+            hitSlop={this.props.headerArrowsHitSlop}
           />
           <View style={this.style.monthView}>{weeks}</View>
         </View>

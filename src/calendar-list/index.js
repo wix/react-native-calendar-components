@@ -1,16 +1,15 @@
-import React, {Component} from 'react';
-import {FlatList, Platform, Dimensions, ActivityIndicator, View} from 'react-native';
 import PropTypes from 'prop-types';
+import React, {Component} from 'react';
+import {ActivityIndicator, Dimensions, FlatList, Platform, View} from 'react-native';
 import XDate from 'xdate';
 
-import {xdateToData, parseDate} from '../interface';
-import styleConstructor from './style';
-import dateutils from '../dateutils';
 import Calendar from '../calendar';
-import CalendarListItem from './item';
 import CalendarHeader from '../calendar/header/index';
+import dateutils from '../dateutils';
+import {parseDate, xdateToData} from '../interface';
 import {STATIC_HEADER} from '../testIDs';
-
+import CalendarListItem from './item';
+import styleConstructor from './style';
 
 const {width} = Dimensions.get('window');
 
@@ -284,6 +283,7 @@ class CalendarList extends Component {
           weekNumbers={this.props.showWeekNumbers}
           onPressArrowLeft={this.props.onPressArrowLeft}
           onPressArrowRight={this.props.onPressArrowRight}
+          hitSlop={this.props.hitSlop}
           testID={STATIC_HEADER}
           accessibilityElementsHidden={true} // iOS
           importantForAccessibility={'no-hide-descendants'} // Android

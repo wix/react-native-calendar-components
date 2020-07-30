@@ -4,6 +4,8 @@ Please make our job easier by filling this template out to completion. If you're
 
 1-2 sentences describing the problem you're having or the feature you'd like to request
 
+>The hitSlop was fixed to 20, this was too rigid. I faced issues where arrow buttons were overlaying any other button above the calendar header. Added a property to *headerArrowsHitSlop* so that it can be set to 0 (or any other custom value)
+
 ## Expected Behavior
 
 What action did you perform, and what did you expect to happen?
@@ -23,7 +25,9 @@ Error text goes here!
 Please run these commands in the project folder and fill in their results:
 
 * `npm ls react-native-calendars`:
+>└── (empty)
 * `npm ls react-native`:
+>└── react-native@0.62.2 
 
 Also specify:
 

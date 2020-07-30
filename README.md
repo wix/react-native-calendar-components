@@ -120,6 +120,8 @@ LocaleConfig.defaultLocale = 'fr';
   disableAllTouchEventsForDisabledDays={true}
   /** Replace default month and year title with custom one. the function receive a date as parameter. */
   renderHeader={(date) => {/*Return JSX*/}}
+  // Custom hit slop for arrows (left / right) in calendar header. Default = 20
+  headerArrowsHitSlop={0}
 />
 ```
 
