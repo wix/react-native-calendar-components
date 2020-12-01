@@ -321,6 +321,10 @@ class CalendarList extends Component {
           scrollsToTop={this.props.scrollsToTop}
           onEndReachedThreshold={this.props.onEndReachedThreshold}
           onEndReached={this.props.onEndReached}
+          onScrollBeginDrag={this.props.onScrollBeginDrag}
+          onScrollEndDrag={this.props.onScrollEndDrag}
+          onMomentumScrollBegin={this.props.onMomentumScrollBegin}
+          onMomentumScrollEnd={this.props.onMomentumScrollEnd}
           keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
         />
         {this.renderStaticHeader()}
