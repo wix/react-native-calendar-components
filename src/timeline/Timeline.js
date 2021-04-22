@@ -95,9 +95,7 @@ export default class Timeline extends React.PureComponent {
     return range(start, end + 1).map((i, index) => {
       let timeText;
       
-      if (i === start) {
-        timeText = '';
-      } else if (i < 12) {
+      if (i < 12) {
         timeText = !format24h ? `${i} AM` : `${i}:00`;
       } else if (i === 12) {
         timeText = !format24h ? `${i} PM` : `${i}:00`;

@@ -69,16 +69,7 @@ class ReservationList extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      if (!dateutils.sameDate(prevProps.topDay, this.props.topDay)) {
-        this.setState(
-          {
-            reservations: []
-          },
-          () => this.updateReservations(this.props)
-        );
-      } else {
-        this.updateReservations(this.props);
-      }
+      this.updateReservations(this.props);
     }
   }
 
