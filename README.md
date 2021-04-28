@@ -114,6 +114,8 @@ LocaleConfig.defaultLocale = 'fr';
   disableAllTouchEventsForDisabledDays={true}
   // Replace default month and year title with custom one. the function receive a date as parameter.
   renderHeader={(date) => {/*Return JSX*/}}
+  /** Replace default day of week with custom one. the function receive a day, index as parameters. */
+  renderWeekDays={(day,idx) => {/*Return JSX*/}}
   // Enable the option to swipe between months. Default = false
   enableSwipeMonths={true}
 />

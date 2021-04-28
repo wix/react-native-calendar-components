@@ -88,8 +88,27 @@ class CalendarListItem extends Component {
           style={[{height: calendarHeight, width: calendarWidth}, this.style.calendar, style]}
           headerStyle={horizontal ? headerStyle : undefined}
           disableMonthChange
-          onPressArrowLeft={horizontal ? this.onPressArrowLeft : onPressArrowLeft}
-          onPressArrowRight={horizontal ? this.onPressArrowRight : onPressArrowRight}
+          markedDates={this.props.markedDates}
+          markingType={this.props.markingType}
+          hideDayNames={this.props.hideDayNames}
+          onDayPress={this.props.onDayPress}
+          onDayLongPress={this.props.onDayLongPress}
+          displayLoadingIndicator={this.props.displayLoadingIndicator}
+          minDate={this.props.minDate}
+          maxDate={this.props.maxDate}
+          firstDay={this.props.firstDay}
+          monthFormat={this.props.monthFormat}
+          dayComponent={this.props.dayComponent}
+          disabledByDefault={this.props.disabledByDefault}
+          showWeekNumbers={this.props.showWeekNumbers}
+          renderArrow={this.props.renderArrow}
+          onPressArrowLeft={this.props.horizontal ? this.onPressArrowLeft : this.props.onPressArrowLeft}
+          onPressArrowRight={this.props.horizontal ? this.onPressArrowRight : this.props.onPressArrowRight}
+          headerStyle={this.props.horizontal ? this.props.headerStyle : undefined}
+          accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
+          importantForAccessibility={this.props.importantForAccessibility} // Android
+          renderHeader={this.props.renderHeader}
+          renderWeekDays={this.props.renderWeekDays}
         />
       );
     } else {

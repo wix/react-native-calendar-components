@@ -65,6 +65,18 @@ class Calendar extends Component {
     disabledByDefault: PropTypes.bool,
     /** Style passed to the header */
     headerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
+    /** Provide aria-level for calendar heading for proper accessibility when used with web (react-native-web) */
+    webAriaLevel: PropTypes.number,
+    /** Apply custom disable color to selected day indexes */
+    disabledDaysIndexes: PropTypes.arrayOf(PropTypes.number),
+    /** Disable all touch events for disabled days. can be override with disableTouchEvent in markedDates*/
+    disableAllTouchEventsForDisabledDays: PropTypes.bool,
+    /** Replace default month and year title with custom one. the function receive a date as parameter. */
+    renderHeader: PropTypes.any,
+    /** Replace default day of week with custom one. the function receive a day, index as parameters. */
+    renderWeekDays: PropTypes.any,
+    /** Enable the option to swipe between months. Default: false */
+    enableSwipeMonths: PropTypes.bool,
     /** Allow rendering of a totally custom header */
     customHeader: PropTypes.any
   };
@@ -304,6 +316,31 @@ class Calendar extends Component {
           accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
           importantForAccessibility={this.props.importantForAccessibility} // Android
         >
+          <CalendarHeader
+            testID={this.props.testID}
+            ref={c => this.header = c}
+            style={this.props.headerStyle}
+            theme={this.props.theme}
+            hideArrows={this.props.hideArrows}
+            month={this.state.currentMonth}
+            addMonth={this.addMonth}
+            showIndicator={indicator}
+            firstDay={this.props.firstDay}
+            showSixWeeks={this.props.showSixWeeks}
+            renderArrow={this.props.renderArrow}
+            monthFormat={this.props.monthFormat}
+            hideDayNames={this.props.hideDayNames}
+            weekNumbers={this.props.showWeekNumbers}
+            onPressArrowLeft={this.props.onPressArrowLeft}
+            onPressArrowRight={this.props.onPressArrowRight}
+            webAriaLevel={this.props.webAriaLevel}
+            disableArrowLeft={this.props.disableArrowLeft}
+            disableArrowRight={this.props.disableArrowRight}
+            disabledDaysIndexes={this.props.disabledDaysIndexes}
+            renderHeader={this.props.renderHeader}
+            renderWeekDays={this.props.renderWeekDays}
+          />
+          <View style={this.style.monthView}>{weeks}</View>
           {this.renderHeader()}
           {this.renderMonth()}
         </View>

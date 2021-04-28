@@ -273,6 +273,7 @@ class CalendarList extends Component {
           addMonth={this.addMonth}
           accessibilityElementsHidden={true} // iOS
           importantForAccessibility={'no-hide-descendants'} // Android
+          renderWeekDays={this.props.renderWeekDays}
         />
       );
     }
