@@ -43,11 +43,13 @@ export default class AgendaView extends Component {
     /** callback that gets called when day changes while scrolling agenda list */
     onDaychange: PropTypes.func, //TODO: Should be renamed 'onDayChange'
     /** specify how agenda knob should look like */
-    renderKnob: PropTypes.func, 
-    /** initially selected day */ 
+    renderKnob: PropTypes.func,
+    /** initially selected day */
     selected: PropTypes.any, //TODO: Should be renamed 'selectedDay'
     /** Hide knob button. Default = false */
-    hideKnob: PropTypes.bool
+    hideKnob: PropTypes.bool,
+    /** Size of knob button. Default = 80 */
+    sizeKnobArea: PropTypes.number
   };
 
   constructor(props) {
@@ -332,7 +334,7 @@ export default class AgendaView extends Component {
   }
 
   render() {
-    const {firstDay, hideKnob, showWeekNumbers, style, testID} = this.props;
+    const {firstDay, hideKnob, showWeekNumbers, style, testID, sizeKnobArea} = this.props;
     const agendaHeight = this.initialScrollPadPosition();
     const weekDaysNames = dateutils.weekDayNames(firstDay);
     const weekdaysStyle = [
@@ -379,14 +381,15 @@ export default class AgendaView extends Component {
       weekdaysStyle.push({height: HEADER_HEIGHT});
     }
 
+    const SIZE_KNOB_AREA = sizeKnobArea || 80;
     const shouldAllowDragging = !hideKnob && !this.state.calendarScrollable;
     const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : 0) - KNOB_HEIGHT;
     const scrollPadStyle = {
       position: 'absolute',
-      width: 80,
+      width: SIZE_KNOB_AREA,
       height: KNOB_HEIGHT,
       top: scrollPadPosition,
-      left: (this.viewWidth - 80) / 2
+      left: (this.viewWidth - SIZE_KNOB_AREA) / 2
     };
 
     return (
