@@ -1,3 +1,5 @@
+import React, {Component} from 'react';
+import {View, TouchableOpacity, Text} from 'react-native';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, {Component, Fragment} from 'react';
@@ -25,7 +27,9 @@ export default class BasicDay extends Component {
     /** The date to return from press callbacks */
     date: PropTypes.object,
     /** Disable all touch events for disabled days. can be override with disableTouchEvent in markedDates*/
-    disableAllTouchEventsForDisabledDays: PropTypes.bool
+    disableAllTouchEventsForDisabledDays: PropTypes.bool,
+    /** Custom under view*/
+    renderUnderDayView: PropTypes.func,
   };
 
   constructor(props) {
@@ -35,7 +39,7 @@ export default class BasicDay extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return shouldUpdate(this.props, nextProps, ['children', 'state', 'markingType', 'marking', 'onPress', 'onLongPress', 'date']);
+    return shouldUpdate(this.props, nextProps, ['state', 'children', 'marking', 'onPress', 'onLongPress', 'renderUnderDayView']);
   }
 
   onPress = () => {
@@ -176,19 +180,29 @@ export default class BasicDay extends Component {
     const {activeOpacity} = this.marking;
 
     return (
-      <TouchableOpacity
-        testID={this.props.testID}
-        style={this.getContainerStyle()}
-        disabled={this.shouldDisableTouchEvent()}
-        activeOpacity={activeOpacity}
-        onPress={!this.shouldDisableTouchEvent() ? this.onPress : undefined}
-        onLongPress={!this.shouldDisableTouchEvent() ? this.onLongPress : undefined}
-        accessible
-        accessibilityRole={this.isDisabled() ? undefined : 'button'}
-        accessibilityLabel={this.props.accessibilityLabel}
-      >
-        {this.isMultiPeriod() ? this.renderText() : this.renderContent()}
-      </TouchableOpacity>
+      <View style={this.style.dayContainer}>
+        <TouchableOpacity
+          testID={this.props.testID}
+          style={containerStyle}
+          onPress={this.onDayPress}
+          onLongPress={this.onDayLongPress}
+          activeOpacity={activeOpacity}
+          disabled={shouldDisableTouchEvent}
+          accessibilityRole={isDisabled ? undefined : 'button'}
+          accessibilityLabel={this.props.accessibilityLabel}
+        >
+          <Text allowFontScaling={false} style={textStyle}>{String(this.props.children)}</Text>
+          <Dot
+            theme={theme}
+            isMarked={marked}
+            dotColor={dotColor}
+            isSelected={selected}
+            isToday={isToday}
+            isDisabled={isDisabled}
+          />
+        </TouchableOpacity>
+        {!!renderUnderDayView && renderUnderDayView(date)}
+      </View>
     );
   }
 

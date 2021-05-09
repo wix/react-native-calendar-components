@@ -65,6 +65,16 @@ class Calendar extends Component {
     disabledByDefault: PropTypes.bool,
     /** Style passed to the header */
     headerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
+    /** Provide aria-level for calendar heading for proper accessibility when used with web (react-native-web) */
+    webAriaLevel: PropTypes.number,
+    /** Apply custom disable color to selected day indexes */
+    disabledDaysIndexes: PropTypes.arrayOf(PropTypes.number),
+    /** Disable all touch events for disabled days. can be override with disableTouchEvent in markedDates*/
+    disableAllTouchEventsForDisabledDays: PropTypes.bool,
+    /** Replace default month and year title with custom one. the function receive a date as parameter. */
+    renderHeader: PropTypes.any,
+    /** Allow user give a custom view which is under the day view(button). the function receive a date as parameter, Default = undefined */
+    renderUnderDayView: PropTypes.func,
     /** Allow rendering of a totally custom header */
     customHeader: PropTypes.any
   };
@@ -161,7 +171,62 @@ class Calendar extends Component {
     } else if (dateutils.sameDate(day, XDate())) {
       state = 'today';
     }
-    return state;
+    if (!dateutils.sameMonth(day, this.state.currentMonth) && this.props.hideExtraDays) {
+      return (<View key={id} style={{flex: 1}}/>);
+    }
+
+    const DayComp = this.getDayComponent();
+    const date = day.getDate();
+    const dateAsObject = xdateToData(day);
+    const accessibilityLabel = this.getAccessibilityLabel(state, day);
+
+    return (
+      <View style={{flex: 1, alignItems: 'center'}} key={id}>
+        <DayComp
+          testID={`${SELECT_DATE_SLOT}-${dateAsObject.dateString}`}
+          state={state}
+          theme={this.props.theme}
+          onPress={this.pressDay}
+          onLongPress={this.longPressDay}
+          date={dateAsObject}
+          marking={this.getDateMarking(day)}
+          accessibilityLabel={accessibilityLabel}
+          disableAllTouchEventsForDisabledDays={this.props.disableAllTouchEventsForDisabledDays}
+          renderUnderDayView={this.props.renderUnderDayView}
+        >
+          {date}
+        </DayComp>
+      </View>
+    );
+  }
+
+  getMarkingLabel(day) {
+    let label = '';
+    const marking = this.getDateMarking(day);
+
+    if (marking.accessibilityLabel) {
+      return marking.accessibilityLabel;
+    }
+
+    if (marking.selected) {
+      label += 'selected ';
+      if (!marking.marked) {
+        label += 'You have no entries for this day ';
+      }
+    }
+    if (marking.marked) {
+      label += 'You have entries for this day ';
+    }
+    if (marking.startingDay) {
+      label += 'period start ';
+    }
+    if (marking.endingDay) {
+      label += 'period end ';
+    }
+    if (marking.disabled || marking.disableTouchEvent) {
+      label += 'disabled ';
+    }
+    return label
   }
 
   onSwipe = gestureName => {

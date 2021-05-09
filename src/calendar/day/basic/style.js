@@ -6,14 +6,19 @@ const STYLESHEET_ID = 'stylesheet.day.basic';
 export default function styleConstructor(theme = {}) {
   const appStyle = {...defaultStyle, ...theme};
   return StyleSheet.create({
+    dayContainer: {
+      alignItems: 'center',
+      ...appStyle.dayContainerStyle,
+    },
     container: {
       alignSelf: 'stretch',
       alignItems: 'center'
     },
     base: {
-      width: 32,
-      height: 32,
-      alignItems: 'center'
+      width: appStyle.daySideLength || 32,
+      height: appStyle.daySideLength || 32,
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     text: {
       marginTop: Platform.OS === 'android' ? 4 : 6,
@@ -29,11 +34,11 @@ export default function styleConstructor(theme = {}) {
     },
     selected: {
       backgroundColor: appStyle.selectedDayBackgroundColor,
-      borderRadius: 16
+      borderRadius: appStyle.daySideLength / 2 || 16
     },
     today: {
       backgroundColor: appStyle.todayBackgroundColor,
-      borderRadius: 16
+      borderRadius: appStyle.daySideLength / 2 || 16
     },
     todayText: {
       color: appStyle.todayTextColor

@@ -26,6 +26,7 @@ export const textMonthFontSize = 16;
 export const textDayHeaderFontSize = 13;
 export const todayButtonFontSize = 14;
 
+export const dayContainerStyle = undefined;
 export const textDayStyle = undefined;
 export const dotStyle = undefined;
 export const arrowStyle = undefined;

@@ -31,6 +31,28 @@ const CalendarsScreen = () => {
     return disabledDates;
   };
 
+  const dayUnderViewData = {
+    '2020-06-16': {selected: true, marked: false, selectedColor: 'green'},
+    '2020-06-17': {marked: true},
+    '2020-06-25': {
+      marked: true,
+      dotColor: 'red',
+      activeOpacity: 0,
+      selected: true,
+      selectedColor: 'red'
+    },
+    '2020-06-26': {disabled: true, disableTouchEvent: true}
+  };
+
+  const dayUnderView = (date) => {
+    let keys = Object.keys(dayUnderViewData);
+    let dayUnderView = null;
+    if(keys.indexOf(date.dateString) >= 0 ){
+      dayUnderView = <Text style={styles.underViewStar}>{'@@'}</Text>;
+    }
+    return dayUnderView;
+  };
+
   const renderCalendarWithSelectableDate = () => {
     return (
       <Fragment>
@@ -364,6 +386,26 @@ const CalendarsScreen = () => {
               </View>
             );
           }}
+        />
+      </Fragment>
+    );
+  };
+
+  const renderCalendarWithUnderDayView = () => {
+    return (
+      <Fragment>
+        <Text style={styles.text}>Calendar with a custom view under the day component</Text>
+        <Calendar
+          style={styles.calendar}
+          current={'2020-06-16'}
+          markedDates={dayUnderViewData}
+          theme={{
+            dayContainerStyle:{
+              height: 40 //allow user give a height to show each week row of month as a same height
+            },
+            daySideLength: 38
+          }}
+          renderUnderDayView={dayUnderView}
         />
       </Fragment>
     );
