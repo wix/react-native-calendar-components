@@ -24,6 +24,7 @@ class CalendarHeader extends Component {
     showWeekNumbers: PropTypes.bool,
     month: PropTypes.instanceOf(XDate),
     addMonth: PropTypes.func,
+    addYear: PropTypes.func,
     /** Month format in the title. Formatting values: http://arshaw.com/xdate/#Formatting */
     monthFormat: PropTypes.string,
     /**  Hide day names. Default = false */
@@ -80,9 +81,19 @@ class CalendarHeader extends Component {
     addMonth(1);
   };
 
+  addYear = () => {
+    const {addYear} = this.props;
+    addYear(1);
+  };
+
   subtractMonth = () => {
     const {addMonth} = this.props;
     addMonth(-1);
+  };
+
+  subtractYear = () => {
+    const {addYear} = this.props;
+    addYear(-1);
   };
 
   onPressLeft = () => {

@@ -79,24 +79,43 @@ class Calendar extends Component {
     this.style = styleConstructor(props.theme);
 
     this.state = {
-      currentMonth: props.current ? parseDate(props.current) : XDate()
+      currentDate: props.current ? parseDate(props.current) : XDate()
     };
 
     this.shouldComponentUpdate = shouldComponentUpdate;
   }
-  
+
   addMonth = count => {
-    this.updateMonth(this.state.currentMonth.clone().addMonths(count, true));
+    this.updateMonth(this.state.currentDate.clone().addMonths(count, true));
   };
 
-  updateMonth = (day, doNotTriggerListeners) => {
-    if (day.toString('yyyy MM') === this.state.currentMonth.toString('yyyy MM')) {
+  addYear = count => {
+    this.updateYear(this.state.currentDate.clone().addYears(count, true));
+  };
+
+  updateYear = (day, doNotTriggerListeners) => {
+    if (day.toString('yyyy') === this.state.currentDate.toString('yyyy')) {
       return;
     }
 
-    this.setState({currentMonth: day.clone()}, () => {
+    this.setState({currentDate: day.clone()}, () => {
         if (!doNotTriggerListeners) {
-          const currMont = this.state.currentMonth.clone();
+          const currentDate = this.state.currentDate.clone();
+          _.invoke(this.props, 'onYearsChange', xdateToData(currentDate));
+          _.invoke(this.props, 'onVisibleYearsChange', [xdateToData(currentDate)]);
+        }
+      }
+    );
+  };
+
+  updateMonth = (day, doNotTriggerListeners) => {
+    if (day.toString('yyyy MM') === this.state.currentDate.toString('yyyy MM')) {
+      return;
+    }
+
+    this.setState({currentDate: day.clone()}, () => {
+        if (!doNotTriggerListeners) {
+          const currMont = this.state.currentDate.clone();
           _.invoke(this.props, 'onMonthChange', xdateToData(currMont));
           _.invoke(this.props, 'onVisibleMonthsChange', [xdateToData(currMont)]);
         }
@@ -105,16 +124,20 @@ class Calendar extends Component {
   };
 
   _handleDayInteraction(date, interaction) {
-    const {disableMonthChange} = this.props;
+    const {disableMonthChange, disableYearChange} = this.props;
     const day = parseDate(date);
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
 
     if (!(minDate && !dateutils.isGTE(day, minDate)) && !(maxDate && !dateutils.isLTE(day, maxDate))) {
       const shouldUpdateMonth = disableMonthChange === undefined || !disableMonthChange;
+      const shouldUpdateYear = disableYearChange === undefined || !disableYearChange;
 
       if (shouldUpdateMonth) {
         this.updateMonth(day);
+      }
+      if (shouldUpdateYear) {
+        this.updateYear(day);
       }
       if (interaction) {
         interaction(xdateToData(day));
@@ -156,7 +179,7 @@ class Calendar extends Component {
       state = 'disabled';
     } else if (dateutils.isDateNotInTheRange(minDate, maxDate, day)) {
       state = 'disabled';
-    } else if (!dateutils.sameMonth(day, this.state.currentMonth)) {
+    } else if (!dateutils.sameMonth(day, this.state.currentDate)) {
       state = 'disabled';
     } else if (dateutils.sameDate(day, XDate())) {
       state = 'today';
@@ -208,7 +231,7 @@ class Calendar extends Component {
     const {hideExtraDays} = this.props;
     const dayProps = extractComponentProps(Day, this.props);
 
-    if (!dateutils.sameMonth(day, this.state.currentMonth) && hideExtraDays) {
+    if (!dateutils.sameMonth(day, this.state.currentDate) && hideExtraDays) {
       return <View key={id} style={this.style.emptyDayContainer} />;
     }
 
@@ -245,10 +268,10 @@ class Calendar extends Component {
   }
 
   renderMonth() {
-    const {currentMonth} = this.state;
+    const {currentDate} = this.state;
     const {firstDay, showSixWeeks, hideExtraDays} = this.props;
     const shouldShowSixWeeks = showSixWeeks && !hideExtraDays;
-    const days = dateutils.page(currentMonth, firstDay, shouldShowSixWeeks);
+    const days = dateutils.page(currentDate, firstDay, shouldShowSixWeeks);
     const weeks = [];
 
     while (days.length) {
@@ -277,8 +300,9 @@ class Calendar extends Component {
       testID: testID,
       style: headerStyle,
       ref: c => (this.header = c),
-      month: this.state.currentMonth,
+      month: this.state.currentDate,
       addMonth: this.addMonth,
+      addYear: this.addYear,
       displayLoadingIndicator: indicator
     };
 
