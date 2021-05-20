@@ -47,6 +47,18 @@ describe('dateutils', function () {
     });
   });
 
+  describe('formatStringNumbers()', function () {
+    it('should format numbers in a string', function () {
+      const arabicNumbers = ["٠", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+      expect(dateutils.formatStringNumbers("December 2020", arabicNumbers)).toEqual("December ٢٠٢٠");
+    });
+
+    it('should return the original string if numbers are not defined', function () {
+      const text = "December 2020";
+      expect(dateutils.formatStringNumbers(text)).toEqual(text);
+    });
+  });
+
   describe('isGTE()', function () {
     it('2014-01-20 >= 2013-12-31', function () {
       const a = XDate(2013, 12, 31);

@@ -7,7 +7,7 @@ import React, {Component, Fragment} from 'react';
 import {ActivityIndicator, Platform, View, Text, TouchableOpacity, Image} from 'react-native';
 
 import {shouldUpdate} from '../../component-updater';
-import {weekDayNames} from '../../dateutils';
+import {formatStringNumbers, weekDayNames} from '../../dateutils';
 import {
   CHANGE_MONTH_LEFT_ARROW,
   CHANGE_MONTH_RIGHT_ARROW,
@@ -30,6 +30,8 @@ class CalendarHeader extends Component {
     addMonth: PropTypes.func,
     /** Month format in the title. Formatting values: http://arshaw.com/xdate/#Formatting */
     monthFormat: PropTypes.string,
+    /** Number array, used to localize non-latin numbers */
+    numbers: PropTypes.array,
     /**  Hide day names. Default = false */
     hideDayNames: PropTypes.bool,
     /** Hide month navigation arrows. Default = false */
@@ -132,7 +134,7 @@ class CalendarHeader extends Component {
   });
 
   renderHeader = () => {
-    const {renderHeader, month, monthFormat, testID, webAriaLevel} = this.props;
+    const {renderHeader, month, monthFormat, numbers, testID, webAriaLevel} = this.props;
     const webProps = Platform.OS === 'web' ? {'aria-level': webAriaLevel} : {};
 
     if (renderHeader) {
@@ -147,7 +149,7 @@ class CalendarHeader extends Component {
           testID={testID ? `${HEADER_MONTH_NAME}-${testID}` : HEADER_MONTH_NAME}
           {...webProps}
         >
-          {month.toString(monthFormat)}
+          {formatStringNumbers(month.toString(monthFormat), numbers)}
         </Text>
       </Fragment>
     );
