@@ -87,6 +87,12 @@ class Calendar extends Component {
 
     // this.shouldComponentUpdate = shouldComponentUpdate;
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.current && prevProps.current !== this.props.current) {
+      this.setState({currentMonth: parseDate(this.props.current)})
+    }
+  }
   
   addMonth = count => {
     this.updateMonth(this.state.currentMonth.clone().addMonths(count, true));
