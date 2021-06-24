@@ -148,6 +148,32 @@ export default class BasicDay extends Component<BasicDayProps> {
     const {customStyles, selectedTextColor} = this.marking;
     const style = [this.style.text];
 
+    switch (this.props.date?.dayNameIndex) {
+      case 0:
+        style.push(this.style['dayTextAtIndex0']);
+        break;
+      case 1:
+        style.push(this.style['dayTextAtIndex1']);
+        break;
+      case 2:
+        style.push(this.style['dayTextAtIndex2']);
+        break;
+      case 3:
+        style.push(this.style['dayTextAtIndex3']);
+        break;
+      case 4:
+        style.push(this.style['dayTextAtIndex4']);
+        break;
+      case 5:
+        style.push(this.style['dayTextAtIndex5']);
+        break;
+      case 6:
+        style.push(this.style['dayTextAtIndex6']);
+        break;
+      default:
+        break;
+    }
+
     if (this.isSelected()) {
       style.push(this.style.selectedText);
       if (selectedTextColor) {

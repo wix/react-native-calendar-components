@@ -84,7 +84,8 @@ describe('Calendar', () => {
           day: 10,
           month: 4,
           timestamp: 1586476800000,
-          year: 2020
+          year: 2020,
+          dayNameIndex: 5
         });
       });
 
@@ -126,6 +127,25 @@ describe('Calendar', () => {
         const drv = new CalendarDriver().withDefaultProps({theme: {todayTextColor, todayBackgroundColor}}).render();
         expect(drv.getDay(date).getStyle()).toEqual(partial({backgroundColor: todayBackgroundColor, borderRadius: 16}));
         expect(drv.getDay(date).getTextStyle()).toEqual(partial({color: todayTextColor}));
+      });
+
+      it('should mark saturday and sunday days', () => {
+        const saturdayDate = '2020-04-04';
+        const sundayDate = '2020-04-05';
+        const textSaturdayColor = 'blue';
+        const textSundayColor = 'red';
+        const drv = new CalendarDriver()
+          .withDefaultProps({
+            theme: {
+              'stylesheet.day.basic': {
+                dayTextAtIndex0: {color: textSundayColor},
+                dayTextAtIndex6: {color: textSaturdayColor}
+              }
+            }
+          })
+          .render();
+        expect(drv.getDay(saturdayDate).getTextStyle()).toEqual(partial({color: textSaturdayColor}));
+        expect(drv.getDay(sundayDate).getTextStyle()).toEqual(partial({color: textSundayColor}));
       });
     });
 

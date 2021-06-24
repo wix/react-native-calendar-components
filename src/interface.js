@@ -14,7 +14,8 @@ function xdateToData(d) {
     month: d.getMonth() + 1,
     day: d.getDate(),
     timestamp: XDate(dateString, true).getTime(),
-    dateString: dateString
+    dateString: dateString,
+    dayNameIndex: d.getDay()
   };
 }
 
