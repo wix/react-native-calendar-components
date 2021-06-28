@@ -59,7 +59,9 @@ class CalendarList extends Component {
     /** How far from the end to trigger the onEndReached callback */
     onEndReachedThreshold: PropTypes.number,
     /** Called once when the scroll position gets within onEndReachedThreshold */
-    onEndReached: PropTypes.func
+    onEndReached: PropTypes.func,
+    /** Allows FlatList to be displayed on scrollView */
+    nestedScrollEnabled: PropTypes.bool
   };
 
   static defaultProps = {
@@ -72,7 +74,8 @@ class CalendarList extends Component {
     scrollsToTop: false,
     scrollEnabled: true,
     removeClippedSubviews: Platform.OS === 'android',
-    keyExtractor: (item, index) => String(index)
+    keyExtractor: (item, index) => String(index),
+    nestedScrollEnabled: true
   };
 
   constructor(props) {
@@ -307,6 +310,7 @@ class CalendarList extends Component {
           keyExtractor={this.props.keyExtractor}
           onEndReachedThreshold={this.props.onEndReachedThreshold}
           onEndReached={this.props.onEndReached}
+          nestedScrollEnabled={this.props.nestedScrollEnabled}
         />
         {this.renderStaticHeader()}
       </View>
