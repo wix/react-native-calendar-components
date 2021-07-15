@@ -142,7 +142,7 @@ function getWeekDates(date, firstDay, format) {
   }
 }
 
-module.exports = {
+export {
   weekDayNames,
   sameMonth,
   sameWeek,

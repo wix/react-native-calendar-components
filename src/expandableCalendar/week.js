@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import React, {PureComponent} from 'react';
 import {View} from 'react-native';
 
-import dateutils from '../dateutils';
+import {getWeekDates, sameMonth} from '../dateutils';
 import {parseDate, toMarkingFormat} from '../interface';
 import {getState} from '../day-state-manager';
 import {extractComponentProps} from '../component-updater';
@@ -28,7 +28,7 @@ class Week extends PureComponent {
   }
 
   getWeek(date) {
-    return dateutils.getWeekDates(date, this.props.firstDay);
+    return getWeekDates(date, this.props.firstDay);
   }
 
   // renderWeekNumber (weekNumber) {
@@ -41,7 +41,7 @@ class Week extends PureComponent {
 
     // hide extra days
     if (current && hideExtraDays) {
-      if (!dateutils.sameMonth(day, parseDate(current))) {
+      if (!sameMonth(day, parseDate(current))) {
         return <View key={id} style={this.style.emptyDayContainer} />;
       }
     }

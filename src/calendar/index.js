@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 import {View} from 'react-native';
 import GestureRecognizer, {swipeDirections} from 'react-native-swipe-gestures';
 
-import dateutils from '../dateutils';
+import {page, isGTE, isLTE, sameMonth} from '../dateutils';
 import {xdateToData, parseDate, toMarkingFormat} from '../interface';
 import {getState} from '../day-state-manager';
 // import shouldComponentUpdate from './updater';
@@ -111,7 +111,7 @@ class Calendar extends Component {
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
 
-    if (!(minDate && !dateutils.isGTE(day, minDate)) && !(maxDate && !dateutils.isLTE(day, maxDate))) {
+    if (!(minDate && !isGTE(day, minDate)) && !(maxDate && !isLTE(day, maxDate))) {
       const shouldUpdateMonth = disableMonthChange === undefined || !disableMonthChange;
 
       if (shouldUpdateMonth) {
@@ -177,7 +177,7 @@ class Calendar extends Component {
     const {hideExtraDays, markedDates} = this.props;
     const dayProps = extractComponentProps(Day, this.props);
 
-    if (!dateutils.sameMonth(day, this.state.currentMonth) && hideExtraDays) {
+    if (!sameMonth(day, this.state.currentMonth) && hideExtraDays) {
       return <View key={id} style={this.style.emptyDayContainer} />;
     }
 
@@ -217,7 +217,7 @@ class Calendar extends Component {
     const {currentMonth} = this.state;
     const {firstDay, showSixWeeks, hideExtraDays} = this.props;
     const shouldShowSixWeeks = showSixWeeks && !hideExtraDays;
-    const days = dateutils.page(currentMonth, firstDay, shouldShowSixWeeks);
+    const days = page(currentMonth, firstDay, shouldShowSixWeeks);
     const weeks = [];
 
     while (days.length) {

@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import XDate from 'xdate';
-import dateutils from '../../dateutils';
+import {sameMonth as dateutils_sameMonth} from '../../dateutils';
 import {xdateToData, toMarkingFormat} from '../../interface';
 
 const commons = require('../commons');
@@ -44,7 +44,7 @@ class Presenter {
   };
 
   setDate = (props, date, newDate, updateState, updateSource) => {
-    const sameMonth = dateutils.sameMonth(XDate(date), XDate(newDate));
+    const sameMonth = dateutils_sameMonth(XDate(date), XDate(newDate));
     const buttonIcon = this.getButtonIcon(date, props.showTodayButton);
 
     updateState(buttonIcon);

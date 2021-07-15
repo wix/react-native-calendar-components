@@ -7,7 +7,7 @@ import React, {Component} from 'react';
 import {AccessibilityInfo, PanResponder, Animated, View, Text, Image} from 'react-native';
 
 import {CALENDAR_KNOB} from '../testIDs';
-import dateutils from '../dateutils';
+import {page, weekDayNames} from '../dateutils';
 import {parseDate, toMarkingFormat} from '../interface';
 import styleConstructor, {HEADER_HEIGHT} from './style';
 import CalendarList from '../calendar-list';
@@ -207,7 +207,7 @@ class ExpandableCalendar extends Component {
   }
 
   getNumberOfWeeksInMonth(month) {
-    const days = dateutils.page(month, this.props.firstDay);
+    const days = page(month, this.props.firstDay);
     return days.length / 7;
   }
 
@@ -406,7 +406,7 @@ class ExpandableCalendar extends Component {
 
   renderHeader() {
     const monthYear = XDate(this.props.context.date).toString('MMMM yyyy');
-    const weekDaysNames = dateutils.weekDayNames(this.props.firstDay);
+    const weekDaysNames = weekDayNames(this.props.firstDay);
 
     return (
       <Animated.View

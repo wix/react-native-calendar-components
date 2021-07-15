@@ -6,7 +6,7 @@ import React, {Component} from 'react';
 import {FlatList, ActivityIndicator, View} from 'react-native';
 
 import {extractComponentProps} from '../../component-updater';
-import dateutils from '../../dateutils';
+import {sameDate} from '../../dateutils';
 import {toMarkingFormat} from '../../interface';
 import styleConstructor from './style';
 import Reservation from './reservation';
@@ -72,7 +72,7 @@ class ReservationList extends Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps !== this.props) {
-      if (!dateutils.sameDate(prevProps.topDay, this.props.topDay)) {
+      if (!sameDate(prevProps.topDay, this.props.topDay)) {
         this.setState(
           {
             reservations: []
@@ -94,7 +94,7 @@ class ReservationList extends Component {
   updateReservations(props) {
     const {selectedDay} = props;
     const reservations = this.getReservations(props);
-    if (this.list && !dateutils.sameDate(selectedDay, this.selectedDay)) {
+    if (this.list && !sameDate(selectedDay, this.selectedDay)) {
       let scrollPosition = 0;
       for (let i = 0; i < reservations.scrollPosition; i++) {
         scrollPosition += this.heights[i] || 0;
@@ -191,7 +191,7 @@ class ReservationList extends Component {
     if (!row) return;
 
     const day = row.day;
-    const sameDate = dateutils.sameDate(day, this.selectedDay);
+    const sameDate = sameDate(day, this.selectedDay);
     if (!sameDate && this.scrollOver) {
       this.selectedDay = day.clone();
       _.invoke(this.props, 'onDayChange', day.clone());

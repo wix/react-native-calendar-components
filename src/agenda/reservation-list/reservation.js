@@ -4,7 +4,7 @@ import XDate from 'xdate';
 import React, {Component} from 'react';
 import {View, Text} from 'react-native';
 import {xdateToData} from '../../interface';
-import dateutils from '../../dateutils';
+import {isToday} from '../../dateutils';
 import {RESERVATION_DATE} from '../../testIDs';
 import styleConstructor from './style';
 
@@ -59,7 +59,7 @@ class Reservation extends Component {
       return this.props.renderDay(date ? xdateToData(date) : undefined, item);
     }
 
-    const today = dateutils.isToday(date) ? this.style.today : undefined;
+    const today = isToday(date) ? this.style.today : undefined;
 
     if (date) {
       return (

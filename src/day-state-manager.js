@@ -23,6 +23,4 @@ function getState(day, current, props) {
   return state;
 }
 
-module.exports = {
-  getState
-};
+export {getState};
