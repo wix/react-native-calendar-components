@@ -1,22 +1,64 @@
 import _ from 'lodash';
-import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import memoize from 'memoize-one';
-
 import React, {Component} from 'react';
-import {Text, View, Dimensions, Animated} from 'react-native';
-
-import {extractComponentProps} from '../component-updater';
+import {Text, View, Dimensions, Animated, ViewStyle} from 'react-native';
+// @ts-expect-error
+import {extractComponentProps} from '../component-updater.js';
+// @ts-expect-error
 import {parseDate, xdateToData, toMarkingFormat} from '../interface';
+// @ts-expect-error
 import dateutils from '../dateutils';
+// @ts-expect-error
 import {AGENDA_CALENDAR_KNOB} from '../testIDs';
+// @ts-expect-error
 import {VelocityTracker} from '../input';
+import CalendarList, {CalendarListProps} from '../calendar-list';
 import styleConstructor from './style';
-import CalendarList from '../calendar-list';
-import ReservationList from './reservation-list';
+import ReservationList, {ReservactionListProps}  from './reservation-list';
 
 const HEADER_HEIGHT = 104;
 const KNOB_HEIGHT = 24;
+
+export type AgendaItem = {
+  name: string;
+  height: number;
+}
+
+export type AgendaViewProps = CalendarListProps & ReservactionListProps & {
+  /** agenda container style */
+  style?: ViewStyle;
+  /** the list of items that have to be displayed in agenda. If you want to render item as empty date
+   the value of date key has to be an empty array []. If there exists no value for date key it is
+   considered that the date in question is not yet loaded */
+  items: AgendaItem[];
+  /** callback that gets called when items for a certain month should be loaded (month became visible) */
+  loadItemsForMonth?: (data: any) => void;
+  /** callback that fires when the calendar is opened or closed */
+  onCalendarToggled?: (enabled: boolean) => void;
+  /** callback that gets called on day press */
+  onDayPress?: (data: any) => void;
+  /** callback that gets called when day changes while scrolling agenda list */
+  onDaychange?: (data: any) => void; //TODO: Should be renamed 'onDayChange'
+  /** specify how agenda knob should look like */
+  renderKnob?: () => JSX.Element;
+  /** initially selected day */
+  selected: boolean, //TODO: Should be renamed 'selectedDay'
+  /** Hide knob button. Default = false */
+  hideKnob: boolean,
+  /** When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false */
+  showClosingKnob: boolean
+}
+
+type AgendaViewState = {
+  scrollY: Animated.Value;
+  calendarIsReady: boolean;
+  calendarScrollable: boolean;
+  firstReservationLoad: boolean;
+  selectedDay: XDate;
+  topDay: XDate;
+}
+
 
 /**
  * @description: Agenda component
@@ -25,37 +67,22 @@ const KNOB_HEIGHT = 24;
  * @example: https://github.com/wix/react-native-calendars/blob/master/example/src/screens/agenda.js
  * @gif: https://github.com/wix/react-native-calendars/blob/master/demo/agenda.gif
  */
-export default class AgendaView extends Component {
+export default class AgendaView extends Component<AgendaViewProps, AgendaViewState> {
   static displayName = 'Agenda';
+  style: any;
+  viewHeight: number;
+  viewWidth: number;
+  scrollTimeout: any;
+  headerState: string;
+  currentMonth: XDate;
+  knobTracker: any;
+  _isMounted: boolean | undefined;
+  scrollPad: any;
+  calendar: any;
+  knob: any;
+  list: any;
 
-  static propTypes = {
-    ...CalendarList.propTypes,
-    ...ReservationList.propTypes,
-    /** agenda container style */
-    style: PropTypes.oneOfType([PropTypes.object, PropTypes.array, PropTypes.number]),
-    /** the list of items that have to be displayed in agenda. If you want to render item as empty date
-     the value of date key has to be an empty array []. If there exists no value for date key it is
-     considered that the date in question is not yet loaded */
-    items: PropTypes.object,
-    /** callback that gets called when items for a certain month should be loaded (month became visible) */
-    loadItemsForMonth: PropTypes.func,
-    /** callback that fires when the calendar is opened or closed */
-    onCalendarToggled: PropTypes.func,
-    /** callback that gets called on day press */
-    onDayPress: PropTypes.func,
-    /** callback that gets called when day changes while scrolling agenda list */
-    onDaychange: PropTypes.func, //TODO: Should be renamed 'onDayChange'
-    /** specify how agenda knob should look like */
-    renderKnob: PropTypes.func,
-    /** initially selected day */
-    selected: PropTypes.any, //TODO: Should be renamed 'selectedDay'
-    /** Hide knob button. Default = false */
-    hideKnob: PropTypes.bool,
-    /** When `true` and `hideKnob` prop is `false`, the knob will always be visible and the user will be able to drag the knob up and close the calendar. Default = false */
-    showClosingKnob: PropTypes.bool
-  };
-
-  constructor(props) {
+  constructor(props: AgendaViewProps) {
     super(props);
 
     this.style = styleConstructor(props.theme);
@@ -72,8 +99,8 @@ export default class AgendaView extends Component {
       calendarIsReady: false,
       calendarScrollable: false,
       firstReservationLoad: false,
-      selectedDay: parseDate(props.selected) || XDate(true),
-      topDay: parseDate(props.selected) || XDate(true)
+      selectedDay: parseDate(props.selected) || new XDate(true),
+      topDay: parseDate(props.selected) || new XDate(true)
     };
 
     this.currentMonth = this.state.selectedDay.clone();
@@ -92,7 +119,7 @@ export default class AgendaView extends Component {
     this.state.scrollY.removeAllListeners();
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: AgendaViewProps) {
     if (this.props.selected && !dateutils.sameDate(parseDate(this.props.selected), parseDate(prevProps.selected))) {
       this.setState({selectedDay: parseDate(this.props.selected)});
     } else if (!prevProps.items) {
@@ -100,7 +127,7 @@ export default class AgendaView extends Component {
     }
   }
 
-  static getDerivedStateFromProps(nextProps) {
+  static getDerivedStateFromProps(nextProps: AgendaViewProps) {
     if (nextProps.items) {
       return {firstReservationLoad: false};
     }
@@ -116,7 +143,7 @@ export default class AgendaView extends Component {
     return Math.max(0, this.viewHeight - HEADER_HEIGHT);
   };
 
-  setScrollPadPosition = (y, animated) => {
+  setScrollPadPosition = (y: number, animated: boolean) => {
     if (this.scrollPad.scrollTo) {
       this.scrollPad.scrollTo({x: 0, y, animated});
     } else {
@@ -125,7 +152,7 @@ export default class AgendaView extends Component {
     }
   };
 
-  toggleCalendarPosition = open => {
+  toggleCalendarPosition = (open: boolean) => {
     const maxY = this.initialScrollPadPosition();
     this.setScrollPadPosition(open ? 0 : maxY, true);
     this.enableCalendarScrolling(open);
@@ -149,7 +176,7 @@ export default class AgendaView extends Component {
     this.calendar.scrollToDay(this.state.selectedDay, this.calendarOffset() + 1, true);
   }
 
-  loadReservations(props) {
+  loadReservations(props: AgendaViewProps) {
     if ((!props.items || !Object.keys(props.items).length) && !this.state.firstReservationLoad) {
       this.setState(
         {
@@ -162,11 +189,11 @@ export default class AgendaView extends Component {
     }
   }
 
-  chooseDayFromCalendar = d => {
+  chooseDayFromCalendar = (d: any) => {
     this.chooseDay(d, !this.state.calendarScrollable);
   };
 
-  chooseDay(d, optimisticScroll) {
+  chooseDay(d: any, optimisticScroll: boolean) {
     const day = parseDate(d);
 
     this.setState({
@@ -216,7 +243,7 @@ export default class AgendaView extends Component {
     this.calendar.scrollToDay(this.state.selectedDay.clone(), this.calendarOffset(), false);
   };
 
-  onLayout = event => {
+  onLayout = (event: any) => {
     this.viewHeight = event.nativeEvent.layout.height;
     this.viewWidth = event.nativeEvent.layout.width;
     this.forceUpdate();
@@ -247,7 +274,7 @@ export default class AgendaView extends Component {
     this.knobTracker.reset();
   };
 
-  onSnapAfterDrag = e => {
+  onSnapAfterDrag = (e: any) => {
     // on Android onTouchEnd is not called if dragging was started
     this.onTouchEnd();
     const currentY = e.nativeEvent.contentOffset.y;
@@ -260,7 +287,7 @@ export default class AgendaView extends Component {
     this.enableCalendarScrolling(snapY === 0);
   };
 
-  onVisibleMonthsChange = months => {
+  onVisibleMonthsChange = (months: any[]) => {
     _.invoke(this.props, 'onVisibleMonthsChange', months);
 
     if (this.props.items && !this.state.firstReservationLoad) {
@@ -274,7 +301,7 @@ export default class AgendaView extends Component {
     }
   };
 
-  onDayChange = day => {
+  onDayChange = (day: any) => {
     const newDate = parseDate(day);
     const withAnimation = dateutils.sameMonth(newDate, this.state.selectedDay);
 
@@ -325,7 +352,7 @@ export default class AgendaView extends Component {
 
   renderKnob() {
     const {showClosingKnob, hideKnob, renderKnob} = this.props;
-    let knob = <View style={this.style.knobContainer} />;
+    let knob: JSX.Element | null = <View style={this.style.knobContainer} />;
 
     if (!hideKnob) {
       const knobView = renderKnob ? renderKnob() : <View style={this.style.knob} />;
@@ -338,7 +365,7 @@ export default class AgendaView extends Component {
     return knob;
   }
 
-  renderWeekDaysNames = memoize(weekDaysNames => {
+  renderWeekDaysNames = memoize((weekDaysNames: string[]) => {
     return weekDaysNames.map((day, index) => (
       <Text allowFontScaling={false} key={day + index} style={this.style.weekday} numberOfLines={1}>
         {day}
@@ -347,6 +374,7 @@ export default class AgendaView extends Component {
   });
 
   renderWeekNumbersSpace = () => {
+    // @ts-expect-error
     return this.props.showWeekNumbers && <View allowFontScaling={false} style={this.style.weekday} numberOfLines={1} />;
   };
 
@@ -402,7 +430,7 @@ export default class AgendaView extends Component {
     const shouldAllowDragging = !hideKnob && !this.state.calendarScrollable;
     const scrollPadPosition = (shouldAllowDragging ? HEADER_HEIGHT : openCalendarScrollPadPosition) - KNOB_HEIGHT;
     const scrollPadStyle = {
-      position: 'absolute',
+      position: 'absolute' as any,
       width: 80,
       height: KNOB_HEIGHT,
       top: scrollPadPosition,
@@ -423,7 +451,7 @@ export default class AgendaView extends Component {
           {this.renderWeekDaysNames(weekDaysNames)}
         </Animated.View>
         <Animated.ScrollView
-          ref={ref => (this.scrollPad = ref)}
+          ref={(ref: any) => (this.scrollPad = ref)}
           style={scrollPadStyle}
           overScrollMode="never"
           showsHorizontalScrollIndicator={false}

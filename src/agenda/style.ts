@@ -4,13 +4,13 @@ import platformStyles from './platform-style';
 
 const STYLESHEET_ID = 'stylesheet.agenda.main';
 
-export default function styleConstructor(theme = {}) {
+export default function styleConstructor(theme: any = {}) {
   const appStyle = {...defaultStyle, ...theme};
   const {knob, weekdays} = platformStyles(appStyle);
 
   return StyleSheet.create({
     container: {
-      flex: 1, 
+      flex: 1,
       overflow: 'hidden'
     },
     animatedContiner: {

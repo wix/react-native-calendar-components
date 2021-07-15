@@ -1,4 +1,9 @@
-export default function platformStyles(appStyle) {
+interface AppStyle {
+  agendaKnobColor: string;
+  calendarBackground: string;
+}
+
+export default function platformStyles(appStyle: AppStyle) {
   return {
     knob: {
       width: 38,
