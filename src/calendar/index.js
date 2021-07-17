@@ -68,7 +68,9 @@ class Calendar extends Component {
     /** Style passed to the header */
     headerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
     /** Allow rendering of a totally custom header */
-    customHeader: PropTypes.any
+    customHeader: PropTypes.any,
+    /** Style passed to the gesture handler */
+    gestureStyle: viewPropTypes.style
   };
 
   static defaultProps = {
@@ -257,12 +259,12 @@ class Calendar extends Component {
   }
 
   render() {
-    const {enableSwipeMonths, style} = this.props;
+    const {enableSwipeMonths, style, gestureStyle} = this.props;
     const GestureComponent = enableSwipeMonths ? GestureRecognizer : View;
     const gestureProps = enableSwipeMonths ? this.swipeProps : undefined;
 
     return (
-      <GestureComponent {...gestureProps}>
+      <GestureComponent {...gestureProps} style={gestureStyle} >
         <View
           style={[this.style.container, style]}
           accessibilityElementsHidden={this.props.accessibilityElementsHidden} // iOS
