@@ -30,7 +30,10 @@ export default class Timeline extends React.PureComponent {
         summary: PropTypes.string.isRequired,
         color: PropTypes.string
       })
-    ).isRequired
+    ).isRequired,
+    scrollToNow: PropTypes.bool,
+    currentDateString: PropTypes.string,
+    updateCurrentTimeIndicatorEveryMinute: PropTypes.bool,
   };
 
   static defaultProps = {
@@ -72,7 +75,43 @@ export default class Timeline extends React.PureComponent {
   }
 
   componentDidMount() {
-    this.props.scrollToFirst && this.scrollToFirst();
+    if (this.isCurrentDateStringForTimeIndicatorSet()) {
+      this.setState({
+        currentTimeIndicatorTopCoordinate: this.currentTimeOffset()
+      });
+
+      if (this.props.updateCurrentTimeIndicatorEveryMinute) {
+        this.interval = setInterval(() => {
+          this.setState({
+            currentTimeIndicatorTopCoordinate: this.currentTimeOffset()
+          });
+        }, 60000);
+      }
+    }
+
+    if (this.props.scrollToFirst) {
+      this.scrollToFirst();
+    } else if (this.props.scrollToNow) {
+      this.scrollToNow();
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.updateCurrentTimeIndicatorEveryMinute) {
+      clearInterval(this.interval);
+    }
+  }
+
+  scrollToNow() {
+    setTimeout(() => {
+      if (this._scrollView) {
+        this._scrollView.scrollTo({
+          x: 0,
+          y: this.currentTimeOffset(),
+          animated: true,
+        });
+      }
+    }, 1);
   }
 
   scrollToFirst() {
@@ -85,6 +124,39 @@ export default class Timeline extends React.PureComponent {
         });
       }
     }, 1);
+  }
+
+  currentTimeOffset() {
+    const offset = 100;
+    const {start = 0} = this.props;
+    const timeNowHour = moment().hour();
+    const timeNowMin = moment().minutes();
+
+    return offset * (timeNowHour - start) + (offset * timeNowMin) / 60;
+  }
+
+  isCurrentDateStringForTimeIndicatorSet () {
+    return typeof this.props.currentDateString !== 'undefined';
+  }
+
+  _renderCurrentTimeIndicator() {
+    if (this.isCurrentDateStringForTimeIndicatorSet() &&
+      this.props.currentDateString === moment().format('YYYY-MM-DD')) {
+      // currentDateString format YYYY-MM-DD, e.g. 2020-11-06
+      // Time indicator should be displayed only on the current date
+      return (
+        <View
+          key={'timeNow'}
+          style={[
+            this.style.lineNow,
+            {
+              top: this.state.currentTimeIndicatorTopCoordinate,
+              width: dimensionWidth - 20,
+            },
+          ]}
+        />
+      );
+    }
   }
 
   _renderLines() {
@@ -189,6 +261,7 @@ export default class Timeline extends React.PureComponent {
       >
         {this._renderLines()}
         {this._renderEvents()}
+        {this._renderCurrentTimeIndicator()}
       </ScrollView>
     );
   }
