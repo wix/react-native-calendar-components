@@ -1,4 +1,4 @@
-const {SELECT_DATE_SLOT, RESERVATION_DATE} = require('../src/testIDs');
+const {SELECT_DATE_SLOT, RESERVATION_DATE, AGENDA_CALENDAR_KNOB} = require('../src/testIDs');
 const testIDs = require('../example/src/testIDs');
 
 describe('Agenda', () => {
@@ -21,5 +21,10 @@ describe('Agenda', () => {
     await expect(element(by.text('OK'))).toBeVisible();
 
     await element(by.text('OK')).tap();
+  });
+
+  it('should tap knob and open calendar', async () => {
+    await element(by.id(AGENDA_CALENDAR_KNOB)).tap();
+    await element(by.id(`${SELECT_DATE_SLOT}-2017-05-21`)).tap();
   });
 });

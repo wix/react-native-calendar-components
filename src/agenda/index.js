@@ -435,9 +435,9 @@ export default class AgendaView extends Component {
           onScrollBeginDrag={this.onStartDrag}
           onScrollEndDrag={this.onSnapAfterDrag}
           onScroll={Animated.event([{nativeEvent: {contentOffset: {y: this.state.scrollY}}}], {useNativeDriver: true})}
+          testID={AGENDA_CALENDAR_KNOB}
         >
           <View
-            testID={AGENDA_CALENDAR_KNOB}
             style={{height: agendaHeight + KNOB_HEIGHT}}
             onLayout={this.onScrollPadLayout}
           />
