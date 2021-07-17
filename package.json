@@ -62,14 +62,16 @@
     "metro-react-native-babel-preset": "^0.64.0",
     "mocha": "^7.1.0",
     "prettier": "^2.0.5",
-    "react": "16.13.1",
     "react-component-driver": "^0.10.0",
-    "react-native": "0.63.4",
     "react-native-navigation": "^6.7.1",
     "react-test-renderer": "^17.0.1",
     "semver": "5.x.x",
     "shell-utils": "1.x.x",
     "typescript": "^4.3.3"
+  },
+  "peerDependencies": {
+    "react": ">=16.x",
+    "react-native": ">=0.60"
   },
   "optionalDependencies": {
     "moment": "^2.24.0"
